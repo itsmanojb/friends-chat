@@ -1,0 +1,22 @@
+{
+  "name": "nysm",
+  "version": "0.1.0",
+  "description": "Now You See Me (NYSM) - video chat application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Manoj Barman",
+    "url": "https://manojbarman.in"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "repository": {
+    "url": "https://github.com/itsmanojb/nysm.git",
+    "type": "git"
+  }
+}
