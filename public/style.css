@@ -1,0 +1,18 @@
+:root {
+  --background: #222
+}
+
+body {
+  background-color: var(--background);
+}
+
+.video-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.video-grid video {
+  height: 300px;
+  width: 400px;
+  object-fit: cover;
+}
