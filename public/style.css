@@ -1,5 +1,11 @@
 :root {
-  --background: #222
+  --background: #fff
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --background: #222
+  }
 }
 
 body {
@@ -15,4 +21,9 @@ body {
   height: 300px;
   width: 400px;
   object-fit: cover;
+}
+
+.messages {
+  height: 100px;
+  overflow-y: scroll;
 }
