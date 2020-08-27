@@ -23,5 +23,11 @@
   "bugs": {
     "url": "https://github.com/itsmanojb/nysm/issues"
   },
-  "homepage": "https://github.com/itsmanojb/nysm#readme"
+  "homepage": "https://github.com/itsmanojb/nysm#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
