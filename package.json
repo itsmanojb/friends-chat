@@ -1,29 +1,27 @@
 {
   "name": "nysm",
-  "version": "0.1.0",
-  "description": "Now You See Me (NYSM) - video chat application",
+  "version": "1.0.0",
+  "description": "NYSM (Now You See Me) is a video chat application built using WebRTC technology.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsmanojb/nysm.git"
+  },
+  "keywords": [
+    "node",
+    "webrtc",
+    "videocall"
+  ],
   "author": {
     "name": "Manoj Barman",
     "url": "https://manojbarman.in"
   },
   "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^2.3.0"
-  },
-  "repository": {
-    "url": "git+https://github.com/itsmanojb/nysm.git",
-    "type": "git"
-  },
   "bugs": {
     "url": "https://github.com/itsmanojb/nysm/issues"
   },
-  "homepage": "https://github.com/itsmanojb/nysm#readme",
-  "devDependencies": {},
-  "keywords": []
+  "homepage": "https://github.com/itsmanojb/nysm#readme"
 }
