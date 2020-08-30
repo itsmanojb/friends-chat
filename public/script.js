@@ -1,7 +1,7 @@
 const socket = io('/');
 
-const myVideoScreen = document.getElementById('my-video-screen');
 const videoGrid = document.getElementById('video-grid');
+const videoController = document.getElementById('videos-controller');
 const userList = document.getElementById('peopleList');
 const messageContainer = document.getElementById('message-container');
 const roomContainer = document.getElementById('room-container');
@@ -27,8 +27,15 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myVideoStream = stream;
-    showMyVideoStream(myVideo, stream);
-    // addVideoStream(myVideo, stream);
+    const muted = sessionStorage.getItem('NYSM_MUTE') || false;
+    const btn = document.getElementById('btnAudio');
+    myVideoStream.getAudioTracks()[0].enabled = !muted;
+    if (muted) {
+      btn.classList.add('no');
+    } else {
+      btn.classList.remove('no');
+    }
+    addVideoStream(myVideo, stream);
 
     myPeer.on('call', (call) => {
       call.answer(stream);
@@ -38,47 +45,56 @@ navigator.mediaDevices
       });
     });
 
-    socket.on('user-connected', ({ userName, userId, users }) => {
+    socket.on('user-connected', (userId) => {
       connectToNewUser(userId, stream);
-      broadcast(`${userName} joined`);
-      updateUserList(users);
     });
+
+    // socket.on('user-connected', ({ userName, userId, users, socketId }) => {
+    //   connectToNewUser(userId, stream, socketId);
+    //   broadcast(`${userName} joined`);
+    //   updateUserList(users);
+    // });
 
     // socket.on('chat-message', ({ message, name }) => {
     //   appendMessage(message, name);
     // });
   });
 
-function showMyVideoStream(video, stream) {
-  const muted = sessionStorage.getItem('NYSM_MUTE') || false;
-  const btn = document.getElementById('btnAudio');
-  myVideoStream.getAudioTracks()[0].enabled = !muted;
-  if (muted) {
-    btn.classList.add('no');
-  } else {
-    btn.classList.remove('no');
-  }
-  video.srcObject = stream;
-  video.addEventListener('loadedmetadata', () => {
-    video.play();
-  });
-  myVideoScreen.append(video);
-}
+// socket.on('user-disconnected', ({ name, id, users }) => {
+//   if (peers[id]) peers[id].close();
+//   broadcast(`${name} left`);
+//   updateUserList(users);
+// });
 
-socket.on('user-disconnected', ({ name, id, users }) => {
-  if (peers[id]) peers[id].close();
-  broadcast(`${name} left`);
-  updateUserList(users);
+// myPeer.on('open', (id) => {
+//   var userName = sessionStorage.getItem('U');
+//   if (!userName) {
+//     userName = prompt('What is your name?');
+//   }
+//   socket.emit('join-room', roomId, id, userName);
+//   broadcast('You joined');
+// });
+
+socket.on('user-disconnected', (userId) => {
+  if (peers[userId]) peers[userId].close();
 });
 
 myPeer.on('open', (id) => {
-  var userName = sessionStorage.getItem('U');
-  if (!userName) {
-    userName = prompt('What is your name?');
-  }
-  socket.emit('join-room', roomId, id, userName);
-  broadcast('You joined');
+  socket.emit('join-room', roomId, id);
 });
+
+// function connectToNewUser(userId, stream) {
+//   const call = myPeer.call(userId, stream);
+//   const video = document.createElement('video');
+//   call.on('stream', (userVideoStream) => {
+//     addVideoStream(video, userVideoStream);
+//   });
+//   call.on('close', () => {
+//     video.remove();
+//   });
+
+//   peers[userId] = call;
+// }
 
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream);
@@ -89,18 +105,16 @@ function connectToNewUser(userId, stream) {
   call.on('close', () => {
     video.remove();
   });
+
   peers[userId] = call;
 }
 
-function addVideoStream(video, stream) {
-  const vidWrapper = document.createElement('div');
+function addVideoStream(video, stream, socketId) {
   video.srcObject = stream;
   video.addEventListener('loadedmetadata', () => {
     video.play();
   });
-  vidWrapper.className = 'video__aux';
-  vidWrapper.append(video);
-  videoGrid.append(vidWrapper);
+  videoGrid.append(video);
 }
 
 const muteUnmute = () => {
@@ -150,7 +164,6 @@ function broadcast(message) {
 
 function updateUserList(users) {
   const allUsers = [];
-  console.log(users);
   for (var key of Object.keys(users)) {
     allUsers.push({
       id: key,
@@ -176,9 +189,30 @@ function updateUserList(users) {
     initials.innerText = initial.toUpperCase();
     avatar.append(initials);
     person.append(avatar);
-
     userList.append(person);
   });
+
+  videoGrid.className = 'videos__reel';
+
+  if (allUsers.length == 1) {
+    videoGrid.classList.add('auto', 'one');
+  } else if (allUsers.length == 2) {
+    videoGrid.classList.add('auto', 'two');
+  } else if (allUsers.length == 3) {
+    videoGrid.classList.add('auto', 'three');
+  } else if (allUsers.length == 4) {
+    videoGrid.classList.add('auto', 'four');
+  } else if (allUsers.length == 5) {
+    videoGrid.classList.add('auto', 'five');
+  } else if (allUsers.length == 6) {
+    videoGrid.classList.add('auto', 'six');
+  } else if (allUsers.length == 7) {
+    videoGrid.classList.add('auto', 'seven');
+  } else if (allUsers.length == 8) {
+    videoGrid.classList.add('auto', 'eight');
+  } else if (allUsers.length == 9) {
+    videoGrid.classList = [];
+  }
 }
 
 function appendMessage(message, sender) {

@@ -49,38 +49,58 @@ app.get('/:room', (req, res) => {
 server.listen(process.env.PORT || 3030);
 
 io.on('connection', (socket) => {
-  socket.on('join-room', (roomId, userId, userName) => {
+  socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
-    rooms[roomId].users[socket.id] = userName;
-    socket.to(roomId).broadcast.emit('user-connected', {
-      userName,
-      id: socket.id,
-      users: rooms[roomId].users,
-    });
-
-    socket.on('send-chat-message', (roomId, message) => {
-      socket.to(roomId).broadcast.emit('chat-message', {
-        message: message,
-        name: rooms[roomId].users[socket.id],
-      });
+    socket.to(roomId).broadcast.emit('user-connected', userId);
+    // messages
+    socket.on('message', (message) => {
+      //send message to the same room
+      io.to(roomId).emit('createMessage', message);
     });
 
     socket.on('disconnect', () => {
-      getUserRooms(socket).forEach((room) => {
-        socket.to(room).broadcast.emit('user-disconnected', {
-          name: rooms[room].users[socket.id],
-          id: socket.id,
-          users: rooms[roomId].users,
-        });
-        delete rooms[room].users[socket.id];
-      });
+      socket.to(roomId).broadcast.emit('user-disconnected', userId);
     });
   });
 });
 
-function getUserRooms(socket) {
-  return Object.entries(rooms).reduce((names, [name, room]) => {
-    if (room.users[socket.id] != null) names.push(name);
-    return names;
-  }, []);
-}
+// io.on('connection', (socket) => {
+//   socket.on('join-room', (roomId, userId, userName) => {
+//     socket.join(roomId);
+//     rooms[roomId].users[socket.id] = userName;
+//     socket.to(roomId).broadcast.emit('user-connected', {
+//       userName,
+//       userId,
+//       users: rooms[roomId].users,
+//       id: socket.id,
+//     });
+
+//     socket.on('send-chat-message', (roomId, message) => {
+//       socket.to(roomId).broadcast.emit('chat-message', {
+//         message: message,
+//         name: rooms[roomId].users[socket.id],
+//       });
+//     });
+
+//     socket.on('disconnect', () => {
+//       getUserRooms(socket).forEach((room) => {
+//         const name = rooms[room].users[socket.id];
+//         const id = socket.id;
+//         delete rooms[room].users[socket.id];
+
+//         socket.to(room).broadcast.emit('user-disconnected', {
+//           name,
+//           id,
+//           users: rooms[roomId].users,
+//         });
+//       });
+//     });
+//   });
+// });
+
+// function getUserRooms(socket) {
+//   return Object.entries(rooms).reduce((names, [name, room]) => {
+//     if (room.users[socket.id] != null) names.push(name);
+//     return names;
+//   }, []);
+// }
