@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create or Join Chatroom | NYSM</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const msg = '<%= msg %>'
+  </script>
+</head>
+
+<body>
+
+  <main class="nysm start">
+    <div class="welcome">
+      <div class="header">
+        <h1>NYSM</h1>
+      </div>
+      <div class="body">
+        <form class="form" action="/" method="POST">
+          <div class="material-textfield">
+            <input placeholder=" " type="text" required id="name" autocomplete="off">
+            <label>Your Name</label>
+          </div>
+          <div class="material-textfield">
+            <input placeholder=" " name="room" type="text" onkeyup="setAction()" id="inputRoomId" autocomplete="off">
+            <label>Room Id <span>(required only to join)</span> </label>
+          </div>
+          <p class="cb">
+            <input type="checkbox" id="cbRemember" />
+            <label for="cbRemember">Remember my name</label>
+          </p>
+          <p class="cb">
+            <input type="checkbox" id="cbAudio" />
+            <label for="cbAudio">Mute my audio</label>
+          </p>
+          <p class="cb">
+            <input type="checkbox" id="cbPVTCall" value="true" name="private" />
+            <label for="cbPVTCall">Private Call</label>
+          </p>
+          <div class="footer">
+            <% if (msg == "not-found") { %>
+            <span class="error">Incorrect Roomid</span>
+            <% } %>
+            <button type="submit" id="btnSubmit">Create Room</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script>
+
+    const setAction = () => {
+      const roomId = document.getElementById('inputRoomId').value;
+      const btn = document.getElementById('btnSubmit');
+      const cbPVT = document.getElementById('cbPVTCall');
+      if (roomId.trim()) {
+        btn.innerText = 'Join Room';
+        cbPVT.setAttribute('disabled', true);
+      } else {
+        cbPVT.removeAttribute('disabled');
+        btn.innerText = 'Create Room';
+      }
+
+    }
+
+    const name = document.getElementById('name');
+    const rememberCB = document.getElementById('cbRemember');
+    rememberCB.addEventListener('change', (event) => {
+      if (event.target.checked) {
+        saveName(name.value);
+      } else {
+        localStorage.removeItem('NYSM_USER');
+      }
+    });
+
+    const audioCB = document.getElementById('cbAudio');
+    audioCB.addEventListener('change', (event) => {
+      setMute(event.target.checked);
+    });
+
+    const videoCB = document.getElementById('cbPVTCall');
+    videoCB.addEventListener('change', (event) => {
+    });
+
+    const saveName = name => {
+      localStorage.setItem('NYSM_USER', name);
+    }
+
+    const setMute = audio => {
+      localStorage.setItem('NYSM_MUTE', audio);
+    }
+
+    const submitForm = () => {
+      if (rememberCB.checked) {
+        saveName(name.value);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (localStorage.getItem('NYSM_USER')) {
+        name.value = localStorage.getItem('NYSM_USER');
+        rememberCB.checked = true
+      }
+    });
+
+
+  </script>
+</body>
+
+</html>
