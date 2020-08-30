@@ -19,13 +19,14 @@
         <h1>NYSM</h1>
       </div>
       <div class="body">
-        <form class="form" action="/" method="POST">
+        <form class="form" action="/" method="POST" onsubmit="return submitForm()">
           <div class="material-textfield">
-            <input placeholder=" " type="text" required id="name" autocomplete="off">
+            <input placeholder=" " type="text" required id="name" autocomplete="off" spellcheck="false">
             <label>Your Name</label>
           </div>
           <div class="material-textfield">
-            <input placeholder=" " name="room" type="text" onkeyup="setAction()" id="inputRoomId" autocomplete="off">
+            <input placeholder=" " name="room" type="text" onkeyup="setAction()" id="inputRoomId" autocomplete="off"
+              spellcheck="false">
             <label>Room Id <span>(required only to join)</span> </label>
           </div>
           <p class="cb">
@@ -94,9 +95,11 @@
     }
 
     const submitForm = () => {
+      sessionStorage.setItem('U', name.value);
       if (rememberCB.checked) {
         saveName(name.value);
       }
+      return true;
     }
 
     document.addEventListener("DOMContentLoaded", function () {

@@ -1,14 +1,21 @@
 const socket = io('/');
 
 const videoGrid = document.getElementById('video-grid');
+const userList = document.getElementById('peopleList');
+const messageContainer = document.getElementById('message-container');
+const roomContainer = document.getElementById('room-container');
+const messageForm = document.getElementById('send-container');
+const messageInput = document.getElementById('message-input');
+
 const myPeer = new Peer(undefined, {
   path: '/peerjs',
   host: '/',
   port: '3030',
 });
 
-let myVideoStream;
 const peers = {};
+let myVideoStream;
+let autoscroll = true;
 
 const myVideo = document.createElement('video');
 myVideo.muted = true;
@@ -31,25 +38,30 @@ navigator.mediaDevices
     });
 
     socket.on('user-connected', ({ userName, userId }) => {
-      console.log(`${userName} connected`);
       connectToNewUser(userId, stream);
+      broadcast(`${userName} joined`);
     });
 
-    socket.on('chat-message', (message) => {
-      $('ul').append(`<li class="message"><b>user</b><br/>${message}</li>`);
-      scrollToBottom();
-    });
+    // socket.on('chat-message', ({ message, name }) => {
+    //   appendMessage(message, name);
+    // });
   });
 
-socket.on('user-disconnected', ({ userId, userName }) => {
-  if (peers[userId]) {
-    peers[userId].close();
+socket.on('user-disconnected', ({ name, id }) => {
+  if (peers[id]) {
+    peers[id].close();
   }
+  broadcast(`${name} left`);
+  console.log(peers);
 });
 
 myPeer.on('open', (id) => {
-  var userName = localStorage.getItem('NYSM_USER') || 'Unknown';
-  socket.emit('join-room', ROOM_ID, id, userName);
+  var userName = sessionStorage.getItem('U');
+  if (!userName) {
+    userName = prompt('What is your name?');
+  }
+  socket.emit('join-room', roomId, id, userName);
+  broadcast('You joined');
 });
 
 function connectToNewUser(userId, stream) {
@@ -61,22 +73,16 @@ function connectToNewUser(userId, stream) {
   call.on('close', () => {
     video.remove();
   });
-
   peers[userId] = call;
 }
 
 function addVideoStream(video, stream) {
   video.srcObject = stream;
-  video.addEventListener('loadedmetadata', () => {
-    video.play();
-  });
-  videoGrid.append(video);
+  // video.addEventListener('loadedmetadata', () => {
+  //   video.play();
+  // });
+  // videoGrid.append(video);
 }
-
-const scrollToBottom = () => {
-  var d = $('.main__chat_window');
-  d.scrollTop(d.prop('scrollHeight'));
-};
 
 const muteUnmute = () => {
   const enabled = myVideoStream.getAudioTracks()[0].enabled;
@@ -133,23 +139,44 @@ const setPlayVideo = () => {
   document.querySelector('.main__video_button').innerHTML = html;
 };
 
-const messageContainer = document.getElementById('message-container');
-const roomContainer = document.getElementById('room-container');
-const messageForm = document.getElementById('send-container');
-const messageInput = document.getElementById('message-input');
-
-if (messageForm != null) {
-  const name = prompt('What is your name?');
-  appendMessage('You joined');
-  socket.emit('new-user', roomName, name);
-
-  messageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const message = messageInput.value;
-    appendMessage(`You: ${message}`);
-    socket.emit('send-chat-message', roomName, message);
+messageForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const message = messageInput.value.trim();
+  if (message) {
+    appendMessage(message, 'me');
+    socket.emit('send-chat-message', roomId, message);
     messageInput.value = '';
-  });
+  }
+});
+
+function broadcast(message) {
+  const messageElement = document.createElement('div');
+  messageElement.className = 'broadcast';
+  messageElement.innerText = message;
+  messageContainer.append(messageElement);
+}
+
+function appendMessage(message, sender) {
+  const messageElement = document.createElement('div');
+  messageElement.className = 'message';
+  const username = document.createElement('span');
+  if (sender == 'me') {
+    messageElement.classList.add('me');
+    username.innerText = 'You';
+  } else {
+    messageElement.classList.remove('me');
+    username.innerText = sender;
+  }
+  messageElement.append(username);
+  const messageText = document.createElement('div');
+  messageText.className = 'bubble';
+  messageText.innerText = message;
+  messageElement.append(messageText);
+  messageContainer.append(messageElement);
+
+  if (autoscroll) {
+    messageElement.scrollIntoView({ block: 'end', behavior: 'smooth' });
+  }
 }
 
 socket.on('room-created', (room) => {
@@ -163,15 +190,5 @@ socket.on('room-created', (room) => {
 });
 
 socket.on('chat-message', (data) => {
-  appendMessage(`${data.name}: ${data.message}`);
+  appendMessage(data.message, data.name);
 });
-
-socket.on('user-disconnected', (name) => {
-  appendMessage(`${name} disconnected`);
-});
-
-function appendMessage(message) {
-  const messageElement = document.createElement('div');
-  messageElement.innerText = message;
-  messageContainer.append(messageElement);
-}
