@@ -37,9 +37,10 @@ navigator.mediaDevices
       });
     });
 
-    socket.on('user-connected', ({ userName, userId }) => {
+    socket.on('user-connected', ({ userName, userId, users }) => {
       connectToNewUser(userId, stream);
       broadcast(`${userName} joined`);
+      updateUserList(users);
     });
 
     // socket.on('chat-message', ({ message, name }) => {
@@ -47,12 +48,10 @@ navigator.mediaDevices
     // });
   });
 
-socket.on('user-disconnected', ({ name, id }) => {
-  if (peers[id]) {
-    peers[id].close();
-  }
+socket.on('user-disconnected', ({ name, id, users }) => {
+  if (peers[id]) peers[id].close();
   broadcast(`${name} left`);
-  console.log(peers);
+  updateUserList(users);
 });
 
 myPeer.on('open', (id) => {
@@ -96,7 +95,6 @@ const muteUnmute = () => {
 };
 
 const playStop = () => {
-  console.log('object');
   let enabled = myVideoStream.getVideoTracks()[0].enabled;
   if (enabled) {
     myVideoStream.getVideoTracks()[0].enabled = false;
@@ -156,6 +154,39 @@ function broadcast(message) {
   messageContainer.append(messageElement);
 }
 
+function updateUserList(users) {
+  const allUsers = [];
+  console.log(users);
+  for (var key of Object.keys(users)) {
+    allUsers.push({
+      id: key,
+      name: users[key],
+    });
+  }
+  userList.innerHTML = '';
+  allUsers.forEach((u) => {
+    let initial = '';
+    let name = u.name.split(' ');
+    if (name.length > 1) {
+      initial = name[0].charAt(0) + name[1].charAt(0);
+    } else {
+      initial = name[0].charAt(0) + name[0].charAt(1);
+    }
+
+    const person = document.createElement('div');
+    person.className = 'person';
+    person.setAttribute('title', name);
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    const initials = document.createElement('span');
+    initials.innerText = initial.toUpperCase();
+    avatar.append(initials);
+    person.append(avatar);
+
+    userList.append(person);
+  });
+}
+
 function appendMessage(message, sender) {
   const messageElement = document.createElement('div');
   messageElement.className = 'message';
@@ -179,15 +210,15 @@ function appendMessage(message, sender) {
   }
 }
 
-socket.on('room-created', (room) => {
-  const roomElement = document.createElement('div');
-  roomElement.innerText = room;
-  const roomLink = document.createElement('a');
-  roomLink.href = `/${room}`;
-  roomLink.innerText = 'join';
-  roomContainer.append(roomElement);
-  roomContainer.append(roomLink);
-});
+// socket.on('room-created', (room) => {
+//   const roomElement = document.createElement('div');
+//   roomElement.innerText = room;
+//   const roomLink = document.createElement('a');
+//   roomLink.href = `/${room}`;
+//   roomLink.innerText = 'join';
+//   roomContainer.append(roomElement);
+//   roomContainer.append(roomLink);
+// });
 
 socket.on('chat-message', (data) => {
   appendMessage(data.message, data.name);

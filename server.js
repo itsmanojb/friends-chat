@@ -52,7 +52,11 @@ io.on('connection', (socket) => {
   socket.on('join-room', (roomId, userId, userName) => {
     socket.join(roomId);
     rooms[roomId].users[socket.id] = userName;
-    socket.to(roomId).broadcast.emit('user-connected', { userName, userId });
+    socket.to(roomId).broadcast.emit('user-connected', {
+      userName,
+      id: socket.id,
+      users: rooms[roomId].users,
+    });
 
     socket.on('send-chat-message', (roomId, message) => {
       socket.to(roomId).broadcast.emit('chat-message', {
@@ -66,6 +70,7 @@ io.on('connection', (socket) => {
         socket.to(room).broadcast.emit('user-disconnected', {
           name: rooms[room].users[socket.id],
           id: socket.id,
+          users: rooms[roomId].users,
         });
         delete rooms[room].users[socket.id];
       });
