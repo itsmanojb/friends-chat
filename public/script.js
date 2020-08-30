@@ -1,5 +1,6 @@
 const socket = io('/');
 
+const myVideoScreen = document.getElementById('my-video-screen');
 const videoGrid = document.getElementById('video-grid');
 const userList = document.getElementById('peopleList');
 const messageContainer = document.getElementById('message-container');
@@ -18,7 +19,6 @@ let myVideoStream;
 let autoscroll = true;
 
 const myVideo = document.createElement('video');
-myVideo.muted = true;
 
 navigator.mediaDevices
   .getUserMedia({
@@ -27,7 +27,8 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myVideoStream = stream;
-    addVideoStream(myVideo, stream);
+    showMyVideoStream(myVideo, stream);
+    // addVideoStream(myVideo, stream);
 
     myPeer.on('call', (call) => {
       call.answer(stream);
@@ -47,6 +48,22 @@ navigator.mediaDevices
     //   appendMessage(message, name);
     // });
   });
+
+function showMyVideoStream(video, stream) {
+  const muted = sessionStorage.getItem('NYSM_MUTE') || false;
+  const btn = document.getElementById('btnAudio');
+  myVideoStream.getAudioTracks()[0].enabled = !muted;
+  if (muted) {
+    btn.classList.add('no');
+  } else {
+    btn.classList.remove('no');
+  }
+  video.srcObject = stream;
+  video.addEventListener('loadedmetadata', () => {
+    video.play();
+  });
+  myVideoScreen.append(video);
+}
 
 socket.on('user-disconnected', ({ name, id, users }) => {
   if (peers[id]) peers[id].close();
@@ -76,65 +93,42 @@ function connectToNewUser(userId, stream) {
 }
 
 function addVideoStream(video, stream) {
+  const vidWrapper = document.createElement('div');
   video.srcObject = stream;
-  // video.addEventListener('loadedmetadata', () => {
-  //   video.play();
-  // });
-  // videoGrid.append(video);
+  video.addEventListener('loadedmetadata', () => {
+    video.play();
+  });
+  vidWrapper.className = 'video__aux';
+  vidWrapper.append(video);
+  videoGrid.append(vidWrapper);
 }
 
 const muteUnmute = () => {
-  const enabled = myVideoStream.getAudioTracks()[0].enabled;
-  if (enabled) {
+  // const enabled = myVideoStream.getAudioTracks()[0].enabled;
+  const btn = document.getElementById('btnAudio');
+  if (!btn.classList.contains('no')) {
     myVideoStream.getAudioTracks()[0].enabled = false;
-    setUnmuteButton();
+    btn.classList.add('no');
   } else {
-    setMuteButton();
     myVideoStream.getAudioTracks()[0].enabled = true;
+    btn.classList.remove('no');
   }
 };
 
 const playStop = () => {
   let enabled = myVideoStream.getVideoTracks()[0].enabled;
+  const btn = document.getElementById('btnVideo');
   if (enabled) {
     myVideoStream.getVideoTracks()[0].enabled = false;
-    setPlayVideo();
+    btn.classList.add('no');
   } else {
-    setStopVideo();
     myVideoStream.getVideoTracks()[0].enabled = true;
+    btn.classList.remove('no');
   }
 };
 
-const setMuteButton = () => {
-  const html = `
-    <i class="fas fa-microphone"></i>
-    <span>Mute</span>
-  `;
-  document.querySelector('.main__mute_button').innerHTML = html;
-};
-
-const setUnmuteButton = () => {
-  const html = `
-    <i class="unmute fas fa-microphone-slash"></i>
-    <span>Unmute</span>
-  `;
-  document.querySelector('.main__mute_button').innerHTML = html;
-};
-
-const setStopVideo = () => {
-  const html = `
-    <i class="fas fa-video"></i>
-    <span>Stop Video</span>
-  `;
-  document.querySelector('.main__video_button').innerHTML = html;
-};
-
-const setPlayVideo = () => {
-  const html = `
-  <i class="stop fas fa-video-slash"></i>
-    <span>Play Video</span>
-  `;
-  document.querySelector('.main__video_button').innerHTML = html;
+const endCall = () => {
+  if (confirm('Hang up current call?')) window.location.replace('/');
 };
 
 messageForm.addEventListener('submit', (e) => {

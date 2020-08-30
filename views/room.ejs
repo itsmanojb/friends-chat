@@ -98,59 +98,26 @@
           </div>
         </div>
         <div class="videos" id="videoUI">
-          <div class="video__main">
-            <video></video>
-          </div>
+          <div class="video__main" id="my-video-screen"></div>
           <!-- private-room -->
           <div class="videos__controller grid">
             <div class="controls">
-              <button class="no">
+              <button id="btnAudio" type="button" onclick="muteUnmute()">
                 <ion-icon name="mic"></ion-icon>
               </button>
-              <button class="no">
+              <button id="btnVideo" type="button" onclick="playStop()">
                 <ion-icon name="videocam-sharp"></ion-icon>
               </button>
             </div>
             <div class="controls">
-              <button class="red-btn">
+              <button class="red-btn" type="button" onclick="endCall()">
                 <ion-icon name="call"></ion-icon>
               </button>
-              <button onclick="openFullscreen()">
+              <button type="button" onclick="openFullscreen()">
                 <ion-icon name="resize"></ion-icon>
               </button>
             </div>
-            <div class="videos__reel auto two">
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-              <div class="video__aux">
-                <video></video>
-              </div>
-            </div>
+            <div class="videos__reel" id="video-grid"></div>
           </div>
         </div>
       </section>

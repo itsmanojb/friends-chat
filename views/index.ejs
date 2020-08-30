@@ -91,7 +91,7 @@
     }
 
     const setMute = audio => {
-      localStorage.setItem('NYSM_MUTE', audio);
+      sessionStorage.setItem('NYSM_MUTE', audio);
     }
 
     const submitForm = () => {
@@ -107,6 +107,7 @@
         name.value = localStorage.getItem('NYSM_USER');
         rememberCB.checked = true
       }
+      sessionStorage.clear('NYSM_MUTE');
     });
 
 
