@@ -49,17 +49,36 @@ app.get('/:room', (req, res) => {
 server.listen(process.env.PORT || 3030);
 
 io.on('connection', (socket) => {
-  socket.on('join-room', (roomId, userId) => {
+  socket.on('join-room', (roomId, userId, userName) => {
     socket.join(roomId);
-    socket.to(roomId).broadcast.emit('user-connected', userId);
-    // messages
-    socket.on('message', (message) => {
-      //send message to the same room
-      io.to(roomId).emit('createMessage', message);
+
+    rooms[roomId].users[userId] = userName;
+
+    socket.to(roomId).broadcast.emit('user-connected', {
+      userId,
+      userName,
+      users: rooms[roomId].users,
+    });
+
+    socket.on('user-check', (roomId) => {
+      socket.to(roomId).emit('attendance', { users: rooms[roomId].users });
+    });
+
+    socket.on('send-chat-message', (roomId, message) => {
+      socket.to(roomId).emit('chat-message', {
+        message,
+        name: rooms[roomId].users[userId],
+      });
     });
 
     socket.on('disconnect', () => {
-      socket.to(roomId).broadcast.emit('user-disconnected', userId);
+      const name = rooms[roomId].users[userId];
+      socket.to(roomId).broadcast.emit('user-disconnected', {
+        userId,
+        name,
+        users: rooms[roomId].users,
+      });
+      delete rooms[roomId].users[userId];
     });
   });
 });

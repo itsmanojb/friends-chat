@@ -37,10 +37,10 @@
             <input type="checkbox" id="cbAudio" />
             <label for="cbAudio">Mute my audio</label>
           </p>
-          <p class="cb">
+          <!-- <p class="cb">
             <input type="checkbox" id="cbPVTCall" value="true" name="private" />
             <label for="cbPVTCall">Private Call</label>
-          </p>
+          </p> -->
           <div class="footer">
             <% if (msg == "not-found") { %>
             <span class="error">Incorrect Roomid</span>
@@ -82,9 +82,9 @@
       setMute(event.target.checked);
     });
 
-    const videoCB = document.getElementById('cbPVTCall');
-    videoCB.addEventListener('change', (event) => {
-    });
+    // const videoCB = document.getElementById('cbPVTCall');
+    // videoCB.addEventListener('change', (event) => {
+    // });
 
     const saveName = name => {
       localStorage.setItem('NYSM_USER', name);
