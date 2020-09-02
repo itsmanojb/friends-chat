@@ -19,7 +19,7 @@
     <div class="container">
       <section class="screen">
         <div class="header">
-          <div class="menu">
+          <div class="menu" onclick="toggleChat(true)">
             <ion-icon name="menu"></ion-icon>
           </div>
           <div class="app-title">
@@ -28,8 +28,8 @@
           <div class="people">
             <div class="people__joined" id="peopleList"></div>
             <div class="people__add">
-              <div class="avatar btn">
-                <ion-icon name="person-add"></ion-icon>
+              <div class="avatar btn" onclick="copyToClipboard()">
+                <ion-icon name="share-outline"></ion-icon>
               </div>
             </div>
           </div>
@@ -56,8 +56,11 @@
           </div>
         </div>
       </section>
-      <section class="chats">
+      <section class="chats" id="chatScreen">
         <div class="chats__header">
+          <div class="menu" onclick="toggleChat(false)">
+            <ion-icon name="videocam-outline"></ion-icon>
+          </div>
           <div class="title">Chats</div>
           <div class="me">
             <div class="avatar">
@@ -78,8 +81,18 @@
         </div>
       </section>
     </div>
+    <div id="snackbar"></div>
   </main>
   <script>
+    const chatScreen = document.getElementById('chatScreen');
+    function toggleChat(show) {
+      if (show) {
+        chatScreen.classList.add('shown');
+      } else {
+        chatScreen.classList.remove('shown');
+      }
+    }
+
     var elem = document.getElementById("videoUI");
     function openFullscreen() {
       if (document.fullscreenElement) {
@@ -104,6 +117,22 @@
         }
       }
     }
+
+    const copyToClipboard = str => {
+      const el = document.createElement('textarea');
+      el.value = window.location.href;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      var x = document.getElementById("snackbar");
+      x.innerText = 'Chatroom URL has been copied to clipboard.';
+      x.className = "show";
+      setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    };
   </script>
   <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
 </body>

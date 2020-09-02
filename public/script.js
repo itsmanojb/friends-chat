@@ -60,10 +60,6 @@ navigator.mediaDevices
     });
   });
 
-// myPeer.on('open', (id) => {
-//   socket.emit('join-room', roomId, id);
-// });
-
 myPeer.on('open', (id) => {
   var userName = sessionStorage.getItem('U');
   if (!userName) {
@@ -75,21 +71,21 @@ myPeer.on('open', (id) => {
   broadcast('You joined');
 });
 
-socket.on('user-disconnected', ({ userId, name, users }) => {
-  if (peers[userId]) {
-    peers[userId].close();
-    broadcast(`${name} left`);
-    // socket.emit('user-check', roomId);
-    delete users[userId];
-    updateUserList(users);
+socket.on('user-disconnected', ({ userId, name, admin, users }) => {
+  if (admin) {
+    document.getElementsByTagName('main')[0].classList.add('call-ended');
+    window.location.replace('/');
+    alert('Call has been ended by author.');
+  } else {
+    if (peers[userId]) {
+      peers[userId].close();
+      broadcast(`${name} left`);
+      // socket.emit('user-check', roomId);
+      delete users[userId];
+      updateUserList(users);
+    }
   }
 });
-
-// socket.on('user-disconnected', ({ name, id, users }) => {
-//   if (peers[id]) peers[id].close();
-//   broadcast(`${name} left`);
-//   updateUserList(users);
-// });
 
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream);
@@ -166,6 +162,7 @@ function updateUserList(users) {
     });
   }
   userList.innerHTML = '';
+
   allUsers.forEach((u) => {
     let initial = '';
     let name = u.name.split(' ');
@@ -186,28 +183,6 @@ function updateUserList(users) {
     person.append(avatar);
     userList.append(person);
   });
-
-  // videoGrid.className = 'videos__reel';
-
-  // if (allUsers.length == 1) {
-  //   videoGrid.classList.add('auto', 'one');
-  // } else if (allUsers.length == 2) {
-  //   videoGrid.classList.add('auto', 'two');
-  // } else if (allUsers.length == 3) {
-  //   videoGrid.classList.add('auto', 'three');
-  // } else if (allUsers.length == 4) {
-  //   videoGrid.classList.add('auto', 'four');
-  // } else if (allUsers.length == 5) {
-  //   videoGrid.classList.add('auto', 'five');
-  // } else if (allUsers.length == 6) {
-  //   videoGrid.classList.add('auto', 'six');
-  // } else if (allUsers.length == 7) {
-  //   videoGrid.classList.add('auto', 'seven');
-  // } else if (allUsers.length == 8) {
-  //   videoGrid.classList.add('auto', 'eight');
-  // } else if (allUsers.length == 9) {
-  //   videoGrid.classList = [];
-  // }
 }
 
 function appendMessage(message, sender) {

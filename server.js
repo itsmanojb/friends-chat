@@ -28,14 +28,12 @@ app.post('/', (req, res) => {
     res.render('index', { msg: 'not-found' });
   } else {
     const room = uuidV4();
-    const pvtRoom = req.body.private ? true : false;
     rooms[room] = {
       users: {},
-      private: pvtRoom,
       created: new Date().getTime(),
     };
+    // io.emit('room-created', room);
     res.redirect(room);
-    io.emit('room-created', room);
   }
 });
 
@@ -52,8 +50,10 @@ io.on('connection', (socket) => {
   socket.on('join-room', (roomId, userId, userName) => {
     socket.join(roomId);
 
+    if (Object.keys(rooms[roomId].users).length === 0) {
+      rooms[roomId].initiator = userId;
+    }
     rooms[roomId].users[userId] = userName;
-
     socket.to(roomId).broadcast.emit('user-connected', {
       userId,
       userName,
@@ -76,6 +76,7 @@ io.on('connection', (socket) => {
       socket.to(roomId).broadcast.emit('user-disconnected', {
         userId,
         name,
+        admin: rooms[roomId].initiator === userId ? true : false,
         users: rooms[roomId].users,
       });
       delete rooms[roomId].users[userId];
