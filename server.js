@@ -14,7 +14,7 @@ app.use('/peerjs', peerServer);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.locals.baseURL = "http://localhost:3000/"
+app.locals.baseURL = process.env.BASE_URL
 const rooms = {};
 
 app.get('/', (req, res) => {
