@@ -1,124 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="text-neutral-600">
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create or Join Chatroom | NYSM</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="<%=baseURL%>/css/styles.min.css">
+  <script src="<%=baseURL%>/js/app.js" defer></script>
+  <script src="<%=baseURL%>/js/index.js" defer></script>
+  <title>NYSM: Friends Chat</title>
   <script>
     const msg = '<%= msg %>'
   </script>
 </head>
 
 <body>
-
-  <main class="nysm start">
-    <div class="welcome">
-      <div class="header">
-        <h1>N.Y.S.M.</h1>
+  <main class="flex flex-col jusify-center lg:h-screen w-screen min-h-[600px]">
+    <header class="h-16 px-4 md:px-10 flex justify-between items-center">
+      <div>
+        <div class="flex gap-3 items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-primary">
+            <path
+              d="M4.5 4.5a3 3 0 00-3 3v9a3 3 0 003 3h8.25a3 3 0 003-3v-9a3 3 0 00-3-3H4.5zM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06z" />
+          </svg>
+          <span class="font-medium text-2xl">NYSM</span>
+        </div>
       </div>
-      <div class="body">
-        <form class="form" action="/" method="POST" onsubmit="return submitForm()">
-          <div class="material-textfield">
-            <input placeholder=" " type="text" required id="name" autocomplete="off" spellcheck="false">
-            <label>Your Name</label>
-          </div>
-          <div class="material-textfield">
-            <input placeholder=" " name="room" type="text" onkeyup="setAction()" id="inputRoomId" autocomplete="off"
-              spellcheck="false">
-            <label>Room Id <span>(required only to join)</span> </label>
-          </div>
-          <p class="cb">
-            <input type="checkbox" id="cbRemember" />
-            <label for="cbRemember">Remember my name</label>
-          </p>
-          <p class="cb">
-            <input type="checkbox" id="cbAudio" />
-            <label for="cbAudio">Mute my audio</label>
-          </p>
-          <!-- <p class="cb">
-            <input type="checkbox" id="cbPVTCall" value="true" name="private" />
-            <label for="cbPVTCall">Private Call</label>
-          </p> -->
-          <div class="footer">
-            <% if (msg == "not-found") { %>
-            <span class="error">Incorrect Roomid</span>
-            <% } %>
-            <button type="submit" id="btnSubmit">Create Room</button>
-          </div>
-          <br>
-          <div style="font-size:11px;line-height: 1.3;color:var(--text-color-muted)">
-            Now You See Me is a video chat app where anyone can initiate a video call, add friends or family
-            members,
-            have
-            chat, completely free.
-          </div>
-        </form>
+      <div class="ml-auto flex gap-2 items-center">
+        <div id="clock" class="hidden md:block md:mr-3"></div>
+        <div class="flex items-center">
+          <button class="h-10 w-10 hover:bg-gray-50 rounded-full justify-center flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center">
+          <a href="https://manojbarman.in" title="Developer Website" target="_blank"
+            class="h-10 w-10 p-1 hover:bg-gray-50 rounded-full overflow-hidden cursor-pointer">
+            <img class="h-8 w-8 rounded-full" src="https://manojbarman.in/images/logo.svg" alt="Manoj Barman">
+          </a>
+        </div>
       </div>
-    </div>
+    </header>
+    <section class="flex-1 px-4 md:px-10 h-full flex items-center">
+      <div class="mx-auto w-full max-w-7xl flex flex-col lg:flex-row gap-10 items-center justify-between">
+        <div class="prose pt-5 md:divide-y">
+          <div class="pt-5">
+            <h1 class="text-4xl font-normal">
+              NYSM: Friends Chat
+              <br>Hanging out is easy now
+            </h1>
+            <p>NYSM (Now You See Me) is a video chat application built using WebRTC technology.
+              <br>Get a link you can send to people you want to meet with. Chat, gossip, discussion - all in realtime.
+            </p>
+            <form action="/" method="POST" onsubmit="return submitForm()">
+              <div class="flex mb-8 gap-2">
+                <button class="bg-primary text-white button">Create Chatroom</button>
+                <input type="text" autocomplete="off" name="room" class="input" placeholder="Enter room id"
+                  id="inputRoomId" onkeyup="setAction()">
+                <button id="btnSubmit" class="text-blue-500 button focus:bg-white hidden font-medium">Join</button>
+              </div>
+            </form>
+          </div>
+          <div class="py-4">
+            <% if (msg=="not-found" ) { %>
+              <span>Couldn't find such room you're trying to join</span>
+              <% } else { %>
+                <span class="text-primary">Learn more</span> about NYSM
+                <% } %>
+          </div>
+        </div>
+        <div class="flex prose mb-10 flex-col gap-2 items-center">
+          <img src="images/welcome.svg" class="mx-auto" alt="welcome">
+          <div class="text-center w-80 leading-tight text-neutral-500">
+            <span>Click <strong>Create Chatroom</strong> to get a link you can send to people you want to meet
+              with</span>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  <script>
-
-    const setAction = () => {
-      const roomId = document.getElementById('inputRoomId').value;
-      const btn = document.getElementById('btnSubmit');
-      const cbPVT = document.getElementById('cbPVTCall');
-      if (roomId.trim()) {
-        btn.innerText = 'Join Room';
-        cbPVT.setAttribute('disabled', true);
-      } else {
-        cbPVT.removeAttribute('disabled');
-        btn.innerText = 'Create Room';
-      }
-
-    }
-
-    const name = document.getElementById('name');
-    const rememberCB = document.getElementById('cbRemember');
-    rememberCB.addEventListener('change', (event) => {
-      if (event.target.checked) {
-        saveName(name.value);
-      } else {
-        localStorage.removeItem('NYSM_USER');
-      }
-    });
-
-    const audioCB = document.getElementById('cbAudio');
-    audioCB.addEventListener('change', (event) => {
-      setMute(event.target.checked);
-    });
-
-    // const videoCB = document.getElementById('cbPVTCall');
-    // videoCB.addEventListener('change', (event) => {
-    // });
-
-    const saveName = name => {
-      localStorage.setItem('NYSM_USER', name);
-    }
-
-    const setMute = audio => {
-      sessionStorage.setItem('NYSM_MUTE', audio);
-    }
-
-    const submitForm = () => {
-      sessionStorage.setItem('U', name.value);
-      if (rememberCB.checked) {
-        saveName(name.value);
-      }
-      return true;
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      if (localStorage.getItem('NYSM_USER')) {
-        name.value = localStorage.getItem('NYSM_USER');
-        rememberCB.checked = true
-      }
-      sessionStorage.clear('NYSM_MUTE');
-    });
-
-
-  </script>
 </body>
 
 </html>
