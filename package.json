@@ -1,7 +1,7 @@
 {
-  "name": "nysm",
+  "name": "friends-chat",
   "version": "1.0.0",
-  "description": "NYSM (Now You See Me) is a video chat application built using WebRTC technology.",
+  "description": "Friends Chat is a video chat application built using WebRTC technology.",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/itsmanojb/nysm.git"
+    "url": "git+https://github.com/itsmanojb/friends-chat.git"
   },
   "keywords": [
     "node",
@@ -21,10 +21,6 @@
     "url": "https://manojbarman.in"
   },
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/itsmanojb/nysm/issues"
-  },
-  "homepage": "https://github.com/itsmanojb/nysm#readme",
   "dependencies": {
     "ejs": "^3.1.5",
     "express": "^4.17.1",
