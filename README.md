@@ -1,10 +1,10 @@
-# NYSM
-NYSM (Now You See Me) is a video chat application built using WebRTC technology.
+# Friends Chat
+
+Friends Chat is a video chat application built using WebRTC technology.
 
 ### Features
 
-- Group Videocall
+- Group Video call
 - Realtime Chatting
-- Dark theme
 
-![Chatroom](/screen-2.png?raw=true "")
+![Chatroom](/screen.png?raw=true)
