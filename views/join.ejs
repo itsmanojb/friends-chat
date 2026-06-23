@@ -10,7 +10,7 @@
     const users = "<%= users %>";
     const msg = "<%= msg %>";
   </script>
-  <link rel="stylesheet" href="<%=baseURL%>/css/styles.min.css">
+  <link rel="stylesheet" href="<%=baseURL%>/css/styles.css">
   <script src="<%=baseURL%>/js/app.js" defer></script>
   <script src="<%=baseURL%>/js/knock.js" defer></script>
   <title>
@@ -90,18 +90,25 @@
             </div>
             <p>
               <% if(users> 0) {%>
-                <%=users%> people in the room
-                  <% } else {%>
-                    No one else is there
-                    <% }%>
+                <% if(users>= 6) {%> 
+                  Room is full
+                <% } else {%>
+                  <%=users%> people in the room
+                <% }%>
+              <% } else {%>
+                No one else is there
+              <% }%>
             </p>
             <% if(mode=='creator' ) { %>
               <button type="submit" class="bg-primary text-white px-4 w-28 py-2 rounded-full shadow-md">Start</button>
               <% } else if (mode=='guest' ) { %>
-                <button type="submit" class="bg-primary text-white px-4 w-36 py-2.5 rounded-full hover:shadow-md">Join
-                  Room</button>
+                <% if(users>= 6) {%> 
+                  <button type="button" disabled class="bg-primary text-white px-4 w-36 py-2.5 rounded-full" style="filter: grayscale(1);opacity: .5;">Join Room</button>
+                   <% } else {%>
+                <button type="submit" class="bg-primary text-white px-4 w-36 py-2.5 rounded-full hover:shadow-md">Join Room</button>
                 <% } %>
-                  <p class="my-6"> <span class="text-sm">Other joining options: n/a</span> </p>
+                <% } %>
+                <p class="my-6"> <span class="text-sm">Other joining options: n/a</span> </p>
           </div>
         </form>
       </div>

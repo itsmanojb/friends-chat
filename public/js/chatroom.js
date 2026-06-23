@@ -228,7 +228,9 @@ navigator.mediaDevices
     });
 
     socket.on("chat-message", ({ message, name, msgTime }) => {
-      appendMessage(message, name, msgTime);
+      if (message.trim().length > 0) {
+        appendMessage(message, name, msgTime);
+      }
     });
 
     socket.on("attendance", ({ users }) => {
@@ -351,7 +353,6 @@ function connectToNewUser(userId, stream) {
     // Re-evaluate layout after removal
     try {
       normalizeTwoPersonLayout();
-      applyLocalFloating();
     } catch (e) {}
   });
   peers[userId] = call;
@@ -438,7 +439,8 @@ const cameraOnOff = () => {
 messageInput.addEventListener("keyup", function (event) {
   if (event.code === "Enter") {
     event.preventDefault();
-    const message = messageInput.value;
+    const message = messageInput.value.trim();
+    if (message.length == 0) return;
     appendMessage(message, "me", new Date().getTime());
     socket.emit("send-chat-message", roomId, message);
     messageInput.value = "";
@@ -455,7 +457,8 @@ messageInput.addEventListener("keyup", function (event) {
 document
   .getElementById("send-button")
   .addEventListener("click", function (event) {
-    const message = messageInput.value;
+    const message = messageInput.value.trim();
+    if (message.length == 0) return;
     messageInput.value = "";
     appendMessage(message, "me", new Date().getTime());
     socket.emit("send-chat-message", roomId, message);
@@ -511,7 +514,7 @@ function addVideoStream(video, stream, userId) {
     </div>
     
     <div class="avatar-fallback flex-col gap-3">
-      <div class="w-20 h-20 rounded-full bg-neutral-700 flex items-center justify-center text-2xl font-bold border-2 border-neutral-600 shadow-md">
+      <div class="rounded-full bg-primary flex items-center justify-center font-bold border-2 border-neutral-600 shadow-md text-white" style="aspect-ratio:1;height:50px">
         <span class="avatar-initials-placeholder" data-peer="${userId || "local"}">${userInitials}</span>
       </div>
       <p class="text-sm text-neutral-400 font-medium tracking-wide avatar-name-placeholder" data-peer="${userId || "local"}">
@@ -591,64 +594,6 @@ function updateUserList(users) {
 
   // Re-verify the count attributes to preserve smart grid constraints
   updateParticipantCountAttribute();
-  applyLocalFloating();
-}
-
-// If exactly two participant video tiles exist, put one as full main and the other floating
-function normalizeTwoPersonLayout() {
-  const videoTiles = Array.from(videoGrid.querySelectorAll(".user-video"));
-  // Remove any previous mode classes
-  videoTiles.forEach((t) => {
-    t.classList.remove("main");
-    t.classList.remove("floating");
-  });
-  const count = videoTiles.length;
-  videoGrid.classList.remove("user-2");
-  if (count === 2) {
-    videoGrid.classList.add("user-2");
-    // pick the first as main and the last as floating (recent remote is floating)
-    const main = videoTiles[0];
-    const floating = videoTiles[1];
-    if (main) main.classList.add("main");
-    if (floating) floating.classList.add("floating");
-  }
-}
-
-// Local floating preference: user can toggle to always float their own video when more than one participant
-function loadLocalFloatingPref() {
-  try {
-    return sessionStorage.getItem("local-floating") === "1";
-  } catch (e) {
-    return false;
-  }
-}
-
-function saveLocalFloatingPref(val) {
-  try {
-    sessionStorage.setItem("local-floating", val ? "1" : "0");
-  } catch (e) {}
-}
-
-function applyLocalFloating() {
-  const enabled = loadLocalFloatingPref();
-  const tiles = Array.from(videoGrid.querySelectorAll(".user-video"));
-  if (enabled && tiles.length > 1) {
-    videoGrid.classList.add("local-float");
-  } else {
-    videoGrid.classList.remove("local-float");
-  }
-  // Update toggle button active state
-  const btn = document.getElementById("btnFloat");
-  if (btn) {
-    if (enabled) btn.classList.add("text-blue-400");
-    else btn.classList.remove("text-blue-400");
-  }
-}
-
-function toggleLocalFloating() {
-  const curr = loadLocalFloatingPref();
-  saveLocalFloatingPref(!curr);
-  applyLocalFloating();
 }
 
 function appendMessage(message, sender, msgTime) {
