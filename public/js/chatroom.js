@@ -528,6 +528,10 @@ function addVideoStream(video, stream, userId) {
   // Throw the completed layout tile bundle onto your smart videoGrid view container frame
   videoGrid.append(userVideo);
 
+  if (!userId) {
+    makeElementDraggable(userVideo);
+  }
+
   // Trigger state evaluation calculations to handle structural changes cleanly
   updateParticipantCountAttribute();
 }
@@ -728,3 +732,104 @@ function handleCopyInviteLink() {
 }
 
 showTime(false);
+
+// ==========================================================================
+// FLOATING VIDEO DRAG UTILITY (MOUSE & TOUCH SUPPORT)
+// ==========================================================================
+function makeElementDraggable(el) {
+  let pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
+
+  // Bind both pointer interactions
+  el.onmousedown = dragStart;
+  el.ontouchstart = dragStart;
+
+  function dragStart(e) {
+    // Only allow dragging if the window is actually floating (more than 1 participant)
+    const countAttr = videoGrid.getAttribute("data-count");
+    if (!countAttr || countAttr === "1") return;
+
+    e = e || window.event;
+
+    // Extract initial click/touch coordinates
+    if (e.type === "touchstart") {
+      pos3 = e.touches[0].clientX;
+      pos4 = e.touches[0].clientY;
+    } else {
+      e.preventDefault(); // Prevents image/text selection ghosts on desktop
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+    }
+
+    // Convert fixed bottom/right constraints into modifiable top/left bounds
+    const rect = el.getBoundingClientRect();
+    const parentRect = videoGrid.getBoundingClientRect();
+
+    el.style.bottom = "auto";
+    el.style.right = "auto";
+    el.style.top = rect.top - parentRect.top + "px";
+    el.style.left = rect.left - parentRect.left + "px";
+
+    // Attach document-wide listeners so tracking doesn't break if mouse slips off tile
+    document.onmouseup = dragEnd;
+    document.ontouchend = dragEnd;
+    document.onmousemove = dragMove;
+    document.ontouchmove = dragMove;
+  }
+
+  function dragMove(e) {
+    e = e || window.event;
+    let clientX, clientY;
+
+    if (e.type === "touchmove") {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    // Calculate dynamic distance differentials
+    pos1 = pos3 - clientX;
+    pos2 = pos4 - clientY;
+    pos3 = clientX;
+    pos4 = clientY;
+
+    // Shift inline style markers
+    el.style.top = el.offsetTop - pos2 + "px";
+    el.style.left = el.offsetLeft - pos1 + "px";
+  }
+
+  function dragEnd() {
+    // Release tracking hooks completely
+    document.onmouseup = null;
+    document.ontouchend = null;
+    document.onmousemove = null;
+    document.ontouchmove = null;
+  }
+}
+
+function updateParticipantCountAttribute() {
+  const totalTiles = videoGrid.querySelectorAll(".user-video").length;
+
+  // Instantly changes grid distribution styles via our custom data attribute in chatroom.css
+  videoGrid.setAttribute("data-count", totalTiles || 1);
+
+  // RESET LOGIC: If you return to solo mode, strip custom inline coordinates to restore normal layout constraints
+  if (totalTiles <= 1) {
+    const localTile = document.getElementById("u-local");
+    if (localTile) {
+      localTile.style.top = "";
+      localTile.style.left = "";
+      localTile.style.bottom = "";
+      localTile.style.right = "";
+    }
+  }
+
+  // Run your existing two-person logic rules as secondary operations
+  if (typeof normalizeTwoPersonLayout === "function") {
+    normalizeTwoPersonLayout();
+  }
+}
