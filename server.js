@@ -110,6 +110,15 @@ io.on("connection", (socket) => {
       });
     });
 
+    socket.on("toggle-audio-state", (isMuted) => {
+      if (rooms[roomId]) {
+        socket.to(roomId).emit("remote-audio-toggled", {
+          userId: userId,
+          isMuted: isMuted,
+        });
+      }
+    });
+
     socket.on("disconnect", () => {
       if (!rooms[roomId]) return;
       const name = rooms[roomId].users[userId];

@@ -1,0 +1,159 @@
+/* ==========================================================================
+   1. CORE VIDEO GRID CONFIGURATION
+   ========================================================================== */
+#videoGrid {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smart Grid auto-fit layout by default */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-auto-rows: 1fr;
+}
+
+/* Ensure every user video wrapper handles its elements cleanly */
+.user-video {
+  position: relative;
+  background-color: #171717; /* neutral-900 */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Force video tag to correctly fill the container without escaping borders */
+.user-video video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   2. REQ 1 & 2: SOLO MODE & MIRROR EFFECTS
+   ========================================================================== */
+#videoGrid[data-count="1"] {
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
+}
+
+/* Force mirror effect strictly on the local self-preview container globally */
+#u-local video {
+  transform: scaleX(-1) !important;
+}
+
+/* Float configuration when multiple participants are active */
+#videoGrid:not([data-count="1"]) #u-local {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 180px;
+  height: 135px;
+  z-index: 50;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  grid-area: auto / auto / auto / auto; /* Prevents grid cell occupation */
+}
+
+/* ==========================================================================
+   3. AUDIO MUTE INDICATOR BADGE
+   ========================================================================== */
+.audio-mute-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: rgba(
+    220,
+    38,
+    38,
+    0.9
+  ) !important; /* solid red badge background */
+  padding: 6px;
+  border-radius: 9999px;
+  z-index: 20; /* Stays securely on top of video streams */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  width: 28px;
+  height: 28px;
+}
+
+.user-video[data-audio="off"] .audio-mute-badge {
+  display: flex !important;
+}
+
+/* ==========================================================================
+   4. REQ 3: AVATAR FALLBACK LAYER (Video Muted / Off)
+   ========================================================================== */
+.avatar-fallback {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: #262626 !important; /* clean dark gray background instead of large red block */
+  color: #ffffff !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+/* Hide raw video tracks completely when camera status flag attributes drop */
+.user-video[data-camera="off"] video {
+  display: none !important;
+}
+
+/* Show our full-surface avatar dashboard box panel instantly */
+.user-video[data-camera="off"] .avatar-fallback {
+  display: flex !important;
+}
+
+/* ==========================================================================
+   5. RESPONSIVE MOBILE VIEWPORTS
+   ========================================================================== */
+@media (max-width: 768px) {
+  #videoGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  /* Immersive mobile layout scaling override for 2-person calls */
+  #videoGrid[data-count="2"] {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  #videoGrid[data-count="2"] .user-video:not(#u-local) {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+    z-index: 10;
+  }
+
+  #videoGrid[data-count="2"] #u-local {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 120px;
+    height: 160px;
+    z-index: 50;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+}
