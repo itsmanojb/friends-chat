@@ -51,6 +51,17 @@
   transform: scaleX(-1) !important;
 }
 
+/* Update your chatroom.css mirror rule condition statement blocks */
+#u-local video {
+  /* Only scale horizontally when the user-facing selfie lens camera is actively generating frames */
+  transition: transform 0.2s ease-in-out;
+}
+
+/* If the back camera is engaged, we can selectively bypass it via a simple JS tracking attribute */
+#videoGrid[data-facing="environment"] #u-local video {
+  transform: scaleX(1) !important;
+}
+
 /* Float configuration when multiple participants are active */
 #videoGrid:not([data-count="1"]) #u-local {
   position: absolute;

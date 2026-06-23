@@ -3,6 +3,7 @@ const myPeer = new Peer();
 
 let activeView = "",
   btnActiveClass = "text-blue-400";
+let currentFacingMode = "user";
 const mediaAlert = document.getElementById("mediaAlert");
 const mediaAlertDismiss = document.getElementById("dismissBtn");
 const infoBtn = document.getElementById("chatInfoBtn");
@@ -524,12 +525,29 @@ function addVideoStream(video, stream, userId) {
   `;
 
   userVideo.querySelector(".video-slot").appendChild(video);
-
+  videoGrid.setAttribute("data-facing", currentFacingMode);
   // Throw the completed layout tile bundle onto your smart videoGrid view container frame
   videoGrid.append(userVideo);
 
   if (!userId) {
     makeElementDraggable(userVideo);
+    let lastTap = 0;
+    userVideo.addEventListener("touchend", (e) => {
+      const currentTime = new Date().getTime();
+      const tapDelay = currentTime - lastTap;
+
+      // If the second touch gesture falls under a 300ms threshold window, fire the trigger
+      if (tapDelay < 300 && tapDelay > 0) {
+        toggleCameraFacingMode();
+        e.preventDefault(); // Suppress double-tap browser zoom defaults
+      }
+      lastTap = currentTime;
+    });
+
+    // OPTIONAL: Add double-click support for desktop testing inside your environment browser
+    userVideo.addEventListener("dblclick", () => {
+      toggleCameraFacingMode();
+    });
   }
 
   // Trigger state evaluation calculations to handle structural changes cleanly
@@ -831,5 +849,59 @@ function updateParticipantCountAttribute() {
   // Run your existing two-person logic rules as secondary operations
   if (typeof normalizeTwoPersonLayout === "function") {
     normalizeTwoPersonLayout();
+  }
+}
+
+async function toggleCameraFacingMode() {
+  if (!myVideoStream) return;
+
+  // 1. Toggle our target state string flag
+  currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+
+  try {
+    // 2. Request a new temporary stream with the updated constraint rules
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: currentFacingMode } },
+      audio: false, // Don't re-request audio to prevent mic popping glitches
+    });
+
+    const newVideoTrack = newStream.getVideoTracks()[0];
+    const oldVideoTrack = myVideoStream.getVideoTracks()[0];
+
+    // 3. Stop the old track to release hardware access
+    if (oldVideoTrack) {
+      oldVideoTrack.stop();
+      myVideoStream.removeTrack(oldVideoTrack);
+    }
+
+    // 4. Inject the new track into your persistent stream bundle instance
+    myVideoStream.addTrack(newVideoTrack);
+
+    // 5. Update your local HTML element video source live frame pointer target
+    const localVideoElement = document
+      .getElementById("u-local")
+      .querySelector("video");
+    if (localVideoElement) {
+      localVideoElement.srcObject = myVideoStream;
+    }
+
+    // 6. Push the new track across all active PeerJS connections to update other users
+    Object.keys(myPeer.connections).forEach((peerId) => {
+      const senders = myPeer.connections[peerId].map((conn) =>
+        conn.peerConnection.getSenders(),
+      );
+      senders.forEach((senderList) => {
+        const videoSender = senderList.find(
+          (s) => s.track && s.track.kind === "video",
+        );
+        if (videoSender) {
+          videoSender.replaceTrack(newVideoTrack);
+        }
+      });
+    });
+  } catch (err) {
+    console.error("[Camera Switch Failed Fallback]", err);
+    // Revert state flag tracking if the device lacks an alternate hardware track choice
+    currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
   }
 }
