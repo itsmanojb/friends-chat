@@ -869,6 +869,17 @@ video {
 .prose-2xl :where(.prose > :last-child):not(:where([class~="not-prose"] *)) {
   margin-bottom: 0;
 }
+.homepage-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  input,
+  button {
+    height: 50px;
+    min-width: max-content;
+  }
+}
 .button {
   -webkit-user-select: none;
   -moz-user-select: none;
