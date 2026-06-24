@@ -1106,7 +1106,7 @@ video {
   position: absolute;
   right: 0;
   left: 0;
-  z-index: 10;
+  z-index: 20;
   height: 100%;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
@@ -1120,7 +1120,7 @@ video {
   position: absolute;
   right: 0;
   left: 0;
-  z-index: 10;
+  z-index: 20;
   height: 100%;
   border-radius: 0.5rem;
   --tw-bg-opacity: 1;
@@ -1153,11 +1153,12 @@ video {
   color: rgb(64 64 64 / var(--tw-text-opacity));
 }
 .ulist {
-  flex: 1 1 0%;
   overflow: auto;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   max-height: calc(100vh - 280px);
+  height: calc(100vh - 420px);
+  margin-block-start: 0.5rem;
 }
 .ulist .item {
   display: flex;
@@ -1741,9 +1742,12 @@ video {
   --tw-text-opacity: 1;
   color: rgb(250 250 250 / var(--tw-text-opacity));
 }
+
 :root {
   --theme-color: #1a73e8;
+  --snackbar-gap: 20px;
 }
+
 body,
 html {
   overflow-x: hidden;
@@ -1758,10 +1762,12 @@ html {
   border-radius: 4px;
   padding: 16px;
   position: fixed;
-  z-index: 10;
-  left: 20px;
-  bottom: 30px;
+  z-index: 30;
+  left: var(--snackbar-gap);
+  right: var(--snackbar-gap);
+  bottom: var(--snackbar-gap);
 }
+
 #snackbar.show {
   visibility: visible;
   -webkit-animation:
@@ -1777,7 +1783,7 @@ html {
     opacity: 0;
   }
   to {
-    bottom: 30px;
+    bottom: var(--snackbar-gap);
     opacity: 1;
   }
 }
@@ -1787,13 +1793,13 @@ html {
     opacity: 0;
   }
   to {
-    bottom: 30px;
+    bottom: var(--snackbar-gap);
     opacity: 1;
   }
 }
 @-webkit-keyframes fadeout {
   0% {
-    bottom: 30px;
+    bottom: var(--snackbar-gap);
     opacity: 1;
   }
   to {
@@ -1803,7 +1809,7 @@ html {
 }
 @keyframes fadeout {
   0% {
-    bottom: 30px;
+    bottom: var(--snackbar-gap);
     opacity: 1;
   }
   to {
@@ -1828,22 +1834,7 @@ html {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
 }
-/* .video-grid.user-2.local-float .user-video.floating {
-  position: absolute;
-  width: 240px;
-  height: 135px;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 40;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-}
-.video-grid.user-2.local-float .user-video.floating video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-} */
+
 .video-grid.local-float .user-video#u-local {
   position: absolute;
   width: 220px;
@@ -1861,6 +1852,10 @@ html {
   object-fit: cover;
 }
 @media screen and (min-width: 768px) {
+  #snackbar {
+    right: auto;
+    min-width: 250px;
+  }
   .chat-list {
     max-height: calc(100vh - 330px);
   }

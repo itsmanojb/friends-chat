@@ -1,3 +1,24 @@
+#videoUI {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100dvw;
+  overflow: hidden;
+}
+
+#controlBar {
+  margin-top: auto;
+}
+
+.media-btn__off::before {
+  content: "";
+  position: absolute;
+  background: red;
+  height: 32px;
+  width: 2px;
+  rotate: 135deg;
+}
+
 /* ==========================================================================
    1. CORE VIDEO GRID CONFIGURATION
    ========================================================================== */
@@ -11,6 +32,7 @@
   /* Smart Grid auto-fit layout by default */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   grid-auto-rows: 1fr;
+  max-height: calc(100vh - 96px);
 }
 
 /* Ensure every user video wrapper handles its elements cleanly */
@@ -135,8 +157,41 @@
 /* ==========================================================================
    5. RESPONSIVE MOBILE VIEWPORTS
    ========================================================================== */
+
 @media (max-width: 768px) {
+  #videoUI {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  #videoZone {
+    grid-column: 1/1;
+    grid-row: 1/1;
+  }
+
+  #controlBar {
+    grid-column: 1/1;
+    grid-row: 1/1;
+    z-index: 10;
+    padding-inline: 1rem;
+    flex-direction: row-reverse;
+  }
+
+  #chatInfoBtn,
+  #participantsBtn,
+  #chatBtn {
+    background-color: #26262656;
+    height: 48px;
+    width: 48px;
+
+    &:hover {
+      background-color: #26262686;
+    }
+  }
+
   #videoGrid {
+    max-height: 100%;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 8px;
   }

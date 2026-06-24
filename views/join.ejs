@@ -22,13 +22,15 @@
   <main class="flex flex-col jusify-center lg:h-screen w-screen min-h-[600px]">
     <header class="h-16 px-4 lg:px-10 flex justify-between items-center">
       <div>
-        <a href="/" class="flex gap-3 items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-primary">
+        <div class="flex items-center">
+          <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-primary">
             <path
               d="M4.5 4.5a3 3 0 00-3 3v9a3 3 0 003 3h8.25a3 3 0 003-3v-9a3 3 0 00-3-3H4.5zM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06z" />
-          </svg>
-          <span class="font-medium text-2xl">NYSM</span>
-        </a>
+          </svg> -->
+          <img src="<%=baseURL%>/images/logo.png" width="32" height="32" style="margin-right:16px" alt="logo">
+          <span class="font-medium text-2xl text-primary">Friends</span>
+          <span class="text-2xl">Chat</span>
+        </div>
       </div>
       <div class="ml-auto flex gap-2 items-center">
         <div id="clock" class="hidden lg:block lg:mr-3"></div>
@@ -56,18 +58,26 @@
             class="aspect-[16/9] bg-black rounded-md overflow-hidden w-full mx-auto relative not-prose">
             <div class="absolute inset-x-0 bottom-4 flex justify-center z-10 gap-4">
               <button type="button" class="media-btn__on" id="btnAudio" onclick="muteUnmute()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                </svg>
+                <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-5 h-5">
+              <path
+                d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
+              <path
+                d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
+            </svg>
               </button>
               <button type="button" class="media-btn__on" id="btnVideo" onclick="cameraOnOff()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round"
-                    d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-                </svg>
+                <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-5 h-5">
+              <path
+                d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z" />
+            </svg>
               </button>
             </div>
           </div>
@@ -108,7 +118,7 @@
                 <button type="submit" class="bg-primary text-white px-4 w-36 py-2.5 rounded-full hover:shadow-md">Join Room</button>
                 <% } %>
                 <% } %>
-                <p class="my-6"> <span class="text-sm">Other joining options: n/a</span> </p>
+                <!-- <p class="my-6"> <span class="text-sm">Other joining options: n/a</span> </p> -->
           </div>
         </form>
       </div>

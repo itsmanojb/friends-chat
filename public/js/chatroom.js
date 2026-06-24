@@ -9,7 +9,6 @@ const mediaAlertDismiss = document.getElementById("dismissBtn");
 const infoBtn = document.getElementById("chatInfoBtn");
 const infoPanel = document.getElementById("infoPanel");
 const participantsBtn = document.getElementById("participantsBtn");
-const participantsPanel = document.getElementById("participantsPanel");
 const userList = document.getElementById("participantsList");
 const chatBtn = document.getElementById("chatBtn");
 const chatPanel = document.getElementById("chatPanel");
@@ -53,17 +52,6 @@ const showPanel = (view) => {
       } else {
         infoPanel.classList.add("hidden");
         infoBtn.classList.remove(btnActiveClass);
-        activeView = "";
-      }
-      break;
-    case "participants":
-      if (activeView !== "participants") {
-        participantsPanel.classList.remove("hidden");
-        participantsBtn.classList.add(btnActiveClass);
-        activeView = "participants";
-      } else {
-        participantsPanel.classList.add("hidden");
-        participantsBtn.classList.remove(btnActiveClass);
         activeView = "";
       }
       break;
@@ -656,37 +644,6 @@ function getMessageTime(time) {
 const endCall = () => {
   if (confirm("Hang up current call?")) window.location.replace("/");
 };
-
-var elem = document.getElementById("videoUI");
-function openFullscreen() {
-  if (document.fullscreenElement) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      /* Firefox */
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      /* Chrome, Safari and Opera */
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      /* IE/Edge */
-      document.msExitFullscreen();
-    }
-  } else {
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-      /* Firefox */
-      elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) {
-      /* Chrome, Safari & Opera */
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      /* IE/Edge */
-      elem.msRequestFullscreen();
-    }
-  }
-}
 
 // Modernized and secure text clipboard copy routine
 const copyToClipboard = (str) => {
